@@ -26,7 +26,6 @@ export class MerkleController {
 
   @Get('list')
   getList() {
-    // Повертаємо список, конвертуючи BigInt в String для JSON
     return this.merkleService.getWhitelist().map((item) => ({
       ...item,
       amount: item.amount.toString(),
