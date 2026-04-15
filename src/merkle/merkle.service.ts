@@ -3,6 +3,13 @@ import { ethers } from 'ethers';
 import { MerkleTree } from 'merkletreejs';
 import keccak256 from 'keccak256';
 
+export interface WhitelistEntry {
+  address: string;
+  amount: bigint;
+  start: bigint;
+  duration: bigint;
+}
+
 @Injectable()
 export class MerkleService {
   constructor() {
@@ -12,7 +19,7 @@ export class MerkleService {
 
   private tree: MerkleTree;
 
-  private whitelist = [
+  private whitelist: WhitelistEntry[] = [
     {
       address: '0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266',
       amount: 1000n,
@@ -71,5 +78,25 @@ export class MerkleService {
       start: user.start,
       duration: user.duration,
     };
+  }
+
+  getWhitelist() {
+    return this.whitelist;
+  }
+
+  updateWhitelist(entries: WhitelistEntry[]) {
+    this.whitelist = entries;
+    this.buildTree();
+    return this.getMerkleRoot();
+  }
+
+  addEntry(entry: WhitelistEntry) {
+    this.whitelist.push({
+      address: entry.address,
+      amount: BigInt(entry.amount),
+      start: BigInt(entry.start),
+      duration: BigInt(entry.duration),
+    });
+    this.buildTree();
   }
 }
